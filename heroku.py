@@ -12,13 +12,13 @@ print('----------- - Bot Alive - ----------')
 def start(update, context):
     """Send a message when the command /start is issued."""
     update.message.reply_text(
-        'Welcome dude \nsend /help if you are not sure what to do ')
+        'Welcome dude \nSend /help if you are not sure what to do ')
 
 
 def help(update, context):
     """Send a message when the command /help is issued."""
     update.message.reply_text(
-        'send art here and ill send it to admins for them to verify and we will post it to the emvc channel to get you some recognition kay .')
+        'Send art here and i will send it to admins for them to verify and we will post it to the Emvc channel to get you some recognition kay .')
 
 
 dp = updater.dispatcher
