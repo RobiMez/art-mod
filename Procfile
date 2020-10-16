@@ -1,1 +1,1 @@
-worker: python3 -m heroku
+web: python3 -m heroku
