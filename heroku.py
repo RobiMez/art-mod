@@ -5,7 +5,7 @@ TOKEN = "1086396783:AAFl7mW9mkuYnmwenRePOW-RSR2AOzurC20"
 PORT = int(os.environ.get('PORT', '8443'))
 updater = Updater(TOKEN)
 
-print('----------- - Bot Alive - ----------')
+print('\n----------- - Bot Alive - ----------\n')
 # add handlers
 
 
@@ -19,6 +19,15 @@ def help(update, context):
     """Send a message when the command /help is issued."""
     update.message.reply_text(
         'Send art here and i will send it to admins for them to verify and we will post it to the Emvc channel to get you some recognition kay .')
+
+
+def artHandler(update, context):
+    """Send a message when the command /help is issued."""
+    message = update.effective_message
+    context.bot.send_photo(chat_id='-1001487552790', caption=f"""
+Artist : {message.chat.first_name}
+Username : {message.chat.username}
+                        """)
 
 
 dp = updater.dispatcher
