@@ -5,6 +5,7 @@ TOKEN = "1086396783:AAFl7mW9mkuYnmwenRePOW-RSR2AOzurC20"
 PORT = int(os.environ.get('PORT', '8443'))
 updater = Updater(TOKEN)
 # add handlers
+print('hey im alive')
 
 
 def start(update, context):
