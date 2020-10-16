@@ -21,10 +21,14 @@ def help(update, context):
         'Send art here and i will send it to admins for them to verify and we will post it to the Emvc channel to get you some recognition kay .')
 
 
+photoid = 'AgACAgQAAxkBAAM4X4gtKynlDSPcfUU8lndi-PxlEmIAAh20MRsa7UlQjoJoG94IKeUX1qknXQADAQADAgADbQADwkMBAAEbBA'
+
+
 def artHandler(update, context):
     """Send a message when the command /help is issued."""
     message = update.effective_message
-    context.bot.send_photo(chat_id='-1001487552790', caption=f"""
+    context.bot.send_message("check this guy ")
+    context.bot.send_photo(chat_id='-1001487552790', photoid, caption=f"""
 Artist : {message.chat.first_name}
 Username : {message.chat.username}
                         """)
