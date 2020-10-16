@@ -12,6 +12,9 @@ def start(update, context):
     update.message.reply_text('Welcome dude')
 
 
+dp = updater.dispatcher
+dp.add_handler(CommandHandler("start", start))
+
 updater.start_webhook(listen="0.0.0.0",
                       port=PORT,
                       url_path=TOKEN)
