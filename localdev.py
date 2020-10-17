@@ -1,5 +1,4 @@
 import os
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import (
     ChatPermissions,
     InlineKeyboardButton,
@@ -7,19 +6,31 @@ from telegram import (
     ParseMode,
     Update,
 )
-from telegram.ext import (CallbackContext, CallbackQueryHandler, CommandHandler,
-                          DispatcherHandlerStop, Filters, MessageHandler,
-                          run_async)
-TOKEN = "1086396783:AAFl7mW9mkuYnmwenRePOW-RSR2AOzurC20"
-# PORT = int(os.environ.get('PORT', '8443'))
-updater = Updater(TOKEN)
+from telegram.ext import (
+    CallbackContext,
+    CallbackQueryHandler,
+    CommandHandler, Updater,
+    DispatcherHandlerStop,
+    Filters,
+    MessageHandler,
+    run_async
+)
 
+
+# ----------------------------------------------------------------
+# Constants : basically a control panel to set the :
+# bot token , log channel and admin group
+TOKEN = "1086396783:AAFl7mW9mkuYnmwenRePOW-RSR2AOzurC20"
 group_chat_id = '-1001158819991'
 channel_id = '-1001326503520'
+# ----------------------------------------------------------------
+PORT = int(os.environ.get('PORT', '8443'))  # webhook things
+updater = Updater(TOKEN)  # Updater declaration
 
+print('\n----------- - ✔️  Bot is Alive - ----------\n')
 
-print('\n----------- - ✔️  Bot Alive - ----------\n')
-# add handlers
+# ----------------------------------------------------------------
+# functionality
 
 
 def start(update, context):
@@ -34,10 +45,6 @@ def help(update, context):
         'Send art here and i will send it to admins for them to verify and we will post it to the Emvc channel to get you some recognition kay .')
 
 
-def do_sth(id):
-    print(id)
-
-
 def artHandler(update, context):
     """handle art from the bot 
     take the art from the bot 
@@ -45,59 +52,89 @@ def artHandler(update, context):
     """
 
     message = update.effective_message
-    print(message)
     file_id = message.photo[0].file_unique_id
+    print("\n------------ artHandler message ----------\n")
+    print(message)
+    print("\n------------ artHandler file_id ----------\n")
     print(file_id)
+    print("\n------------------------------------------\n")
     keyboard = InlineKeyboardMarkup([{
         InlineKeyboardButton(
-            "verify art ", callback_data=f"verify_art({file_id})")
+            "Accept", callback_data=f"accept_art({file_id})")
+    }, {
+        InlineKeyboardButton(
+            "Reject", callback_data=f"reject_art({file_id})")
     }])
 
-    context.bot.send_photo(chat_id=group_chat_id, photo=message.photo[0].file_id, caption=f"""
---- Bot generated verification message ---
+    context.bot.send_photo(
+        chat_id=group_chat_id,
+        photo=message.photo[0].file_id,
+        caption=f"""
 Artist : {message.chat.first_name}
 Username : {message.chat.username}
-""", parse_mode=ParseMode.MARKDOWN, reply_markup=keyboard)
+""",    parse_mode=ParseMode.MARKDOWN,
+        reply_markup=keyboard)
 
 
-def verify_button(update, context):
-    """handles the verification process
-
+def accept_button(update, context):
+    """handles the art accept button 
     """
 
     message = update.effective_message
     data = update.callback_query
+    user_data = data.from_user
     file_id = data['message']['photo'][0].file_id
-    print("----------------------")
-    print(message)
-    print("----------------------")
-    print(data)
-    print("----------------------")
-    print(file_id)
-    print("----------------------")
 
+    print("\n----------- accept_button message  ----------\n")
+    print(message)
+    print("\n----------- accept_button user_data ---------\n")
+    print(user_data)
+    print("\n----------- accept_button file_id  ----------\n")
+    print(file_id)
+    print("\n---------------------------------------------\n")
+    context.bot.send_message(
+        chat_id=user_data.id, text="your art has been accepted and is posted to the channel")
     context.bot.send_photo(chat_id=channel_id, photo=file_id, caption=f"""
---- verified to channel  ---
-Artist : {message.chat.first_name}
-Username : {message.chat.username}
-Description : lorem ipsum sir dolor amet
+Artist : {user_data.first_name} {user_data.last_name}
+Username : @{user_data.username}
 """)
 
-# https://t.me/Emvc_group
 
-# https://t.me/emvc_channel
+def reject_button(update, context):
+    """handles the art reject button 
+    """
+
+    message = update.effective_message
+    data = update.callback_query
+    user_data = data.from_user
+    file_id = data['message']['photo'][0].file_id
+
+    print("\n----------- reject_art message  ----------\n")
+    print(message)
+    print("\n----------- reject_art user_data ---------\n")
+    print(user_data)
+    print("\n----------- reject_art file_id  ----------\n")
+    print(file_id)
+    print("\n---------------------------------------------\n")
+
+    context.bot.send_message(
+        chat_id=user_data.id, text="Sorry but your art has been rejected ")
 
 
-# @EMVC_test_bot
-CALLBACK_QUERY_HANDLER = CallbackQueryHandler(
-    verify_button, pattern=r"verify_art")
+# ----------------------------------------------------------------
+# Dispatchers and Handlers go here
+ACCEPT_CALLBACK_QUERY_HANDLER = CallbackQueryHandler(
+    accept_button, pattern=r"accept_art")
+REJECT_CALLBACK_QUERY_HANDLER = CallbackQueryHandler(
+    reject_button, pattern=r"reject_art")
 
-dp = updater.dispatcher
+dp = updater.dispatcher  # Declaring the dispatcher
+
 dp.add_handler(CommandHandler("start", start))
-dp.add_handler(CALLBACK_QUERY_HANDLER)
 dp.add_handler(CommandHandler("help", help))
-# dp.MessageHandler(Filters.chat(-1234), callback_method)
 dp.add_handler(MessageHandler(Filters.photo, artHandler))
+dp.add_handler(ACCEPT_CALLBACK_QUERY_HANDLER)
+dp.add_handler(REJECT_CALLBACK_QUERY_HANDLER)
 
 # ----------------------------------------------------------------
 # webhook shit

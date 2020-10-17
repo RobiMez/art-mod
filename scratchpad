@@ -38,5 +38,7 @@
             'first_name': 'emvc bot',
             'is_bot': True,
             'username': 'EMVC_test_bot'
-        }}, 'data': 'verify_art(AQADYE3RIl0AA0DqBgAB)', 'from': {'id': 979190369, 'first_name': 'ßrobi', 'is_bot': False,
-                                                                 'username': 'SentientLoaf', 'language_code': 'en'}}
+        }},
+    'data': 'verify_art(AQADYE3RIl0AA0DqBgAB)',
+    'from': {'id': 979190369, 'first_name': 'ßrobi', 'is_bot': False,
+             'username': 'SentientLoaf', 'language_code': 'en'}}
