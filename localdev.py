@@ -1,4 +1,5 @@
 import os
+import re
 from telegram import (
     ChatPermissions,
     InlineKeyboardButton,
@@ -52,28 +53,58 @@ def artHandler(update, context):
     """
 
     message = update.effective_message
+    user_data = message.from_user
+    caption = message.caption
     file_id = message.photo[0].file_unique_id
+    first_name = message.chat.first_name
+
+    last_name = message.chat.last_name
+    name = ''
+    username = message.chat.username
+    if first_name:
+        name = name + first_name
+        if last_name:
+            name = name + ' ' + last_name
+
+    print(name)
     print("\n------------ artHandler message ----------\n")
     print(message)
     print("\n------------ artHandler file_id ----------\n")
     print(file_id)
+    print("\n------------ artHandler user_data  --------\n")
+    print(user_data)
+    print("\n------------ artHandler caption -----------\n")
+    print(caption)
+    print("\n------------ artHandler naming -------------\n")
+    print(name)
+    print(first_name)
+    print(last_name)
     print("\n------------------------------------------\n")
     keyboard = InlineKeyboardMarkup([{
         InlineKeyboardButton(
-            "Accept", callback_data=f"accept_art({file_id})")
+            "Accept", callback_data=f"accept_art({user_data.id})")
     }, {
         InlineKeyboardButton(
-            "Reject", callback_data=f"reject_art({file_id})")
+            "Reject", callback_data=f"reject_art({user_data.id})")
     }])
 
     context.bot.send_photo(
         chat_id=group_chat_id,
         photo=message.photo[0].file_id,
         caption=f"""
-Artist : {message.chat.first_name}
-Username : {message.chat.username}
+{name} @{username}
+
+Description  :
+{caption}
 """,    parse_mode=ParseMode.MARKDOWN,
         reply_markup=keyboard)
+
+    context.bot.send_message(
+        chat_id=user_data.id, text="I have sent your art to the admins for moderation , hang tight . ")
+
+
+# reuben , meareg , michael ,sterling archer (R)
+admins_id_list = [567142057, 356768912, 172497135, 370227928, 979190369]
 
 
 def accept_button(update, context):
@@ -83,21 +114,50 @@ def accept_button(update, context):
     message = update.effective_message
     data = update.callback_query
     user_data = data.from_user
+    caption = message.caption
+    query = update.callback_query
     file_id = data['message']['photo'][0].file_id
-
+    # admins = context.bot.get_chat_administrators(group_chat_id)
+    # for admin in admins:
+    #     admins_id_list.append(admin.user.id)
+    # print(admins_id_list)
+    original_author = re.match(r"accept_art\((.+?)\)", query.data)
+    original_author_str = original_author.group()
+    original_author_id = re.findall(r"\d", original_author_str)
+    original_author_id_int = ""
+    for x in original_author_id:
+        original_author_id_int = original_author_id_int + x
+    orig_author_id = int(original_author_id_int)
+    # original_author_id = re.match("[0123456789]", original_author.group())
     print("\n----------- accept_button message  ----------\n")
     print(message)
     print("\n----------- accept_button user_data ---------\n")
     print(user_data)
     print("\n----------- accept_button file_id  ----------\n")
     print(file_id)
+    print("\n----------- accept_button caption -----------\n")
+    print(caption)
+    print("\n----------- accept_button admins ------------\n")
+    # print(admins[0])
+    print("\n-------- accept_button original_author ------\n")
+    print(original_author)
+    print("\n-------- accept_button original_author_id ------\n")
+    print(original_author_id)
+    print(int(original_author_id_int))
+    # print(type(original_author.group()))
+
     print("\n---------------------------------------------\n")
-    context.bot.send_message(
-        chat_id=user_data.id, text="your art has been accepted and is posted to the channel")
-    context.bot.send_photo(chat_id=channel_id, photo=file_id, caption=f"""
-Artist : {user_data.first_name} {user_data.last_name}
-Username : @{user_data.username}
+    if user_data.id in admins_id_list:
+        print("all good , this guy is an admin ")
+        context.bot.send_message(chat_id=orig_author_id,
+                                 text="Congrats your art has been accepted and posted to the EMVC channel")
+        context.bot.delete_message(
+            chat_id=group_chat_id, message_id=message.message_id)
+        context.bot.send_photo(chat_id=channel_id, photo=file_id, caption=f"""
+{caption}
 """)
+    else:
+        print("Non admin trying to accept art , ignoring  ")
 
 
 def reject_button(update, context):
@@ -107,7 +167,15 @@ def reject_button(update, context):
     message = update.effective_message
     data = update.callback_query
     user_data = data.from_user
+    query = update.callback_query
     file_id = data['message']['photo'][0].file_id
+    original_author = re.match(r"reject_art\((.+?)\)", query.data)
+    original_author_str = original_author.group()
+    original_author_id = re.findall(r"\d", original_author_str)
+    original_author_id_int = ""
+    for x in original_author_id:
+        original_author_id_int = original_author_id_int + x
+    orig_author_id = int(original_author_id_int)
 
     print("\n----------- reject_art message  ----------\n")
     print(message)
@@ -117,8 +185,14 @@ def reject_button(update, context):
     print(file_id)
     print("\n---------------------------------------------\n")
 
-    context.bot.send_message(
-        chat_id=user_data.id, text="Sorry but your art has been rejected ")
+    if user_data.id in admins_id_list:
+        print("all good , this guy is an admin ")
+        context.bot.send_message(
+            chat_id=orig_author_id, text="Sorry your art has been rejected, possible reasons can be breaking the rules, check @EMVC_Rules")
+        context.bot.delete_message(
+            chat_id=group_chat_id, message_id=message.message_id)
+    else:
+        print("Non admin trying to reject art , ignoring  ")
 
 
 # ----------------------------------------------------------------
