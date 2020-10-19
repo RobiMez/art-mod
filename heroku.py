@@ -81,13 +81,14 @@ def artHandler(update, context):
     print(first_name)
     print(last_name)
     print("\n------------------------------------------\n")
-    keyboard = InlineKeyboardMarkup([{
-        InlineKeyboardButton(
-            "Accept", callback_data=f"accept_art({user_data.id})")
-    }, {
-        InlineKeyboardButton(
-            "Reject", callback_data=f"reject_art({user_data.id})")
-    }])
+    keyboard = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton(
+                "Accept", callback_data=f"accept_art({user_data.id})"),
+            InlineKeyboardButton(
+                "Reject", callback_data=f"reject_art({user_data.id})")
+        ],
+    ])
 
     context.bot.send_photo(
         chat_id=group_chat_id,

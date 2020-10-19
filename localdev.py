@@ -29,6 +29,8 @@ PORT = int(os.environ.get('PORT', '8443'))  # webhook things
 updater = Updater(TOKEN)  # Updater declaration
 
 print('\n----------- - ✔️  Bot is Alive - ----------\n')
+# reuben , meareg , michael ,sterling archer (R)
+admins_id_list = [567142057, 356768912, 172497135, 370227928, 979190369]
 
 # ----------------------------------------------------------------
 # functionality
@@ -46,18 +48,34 @@ def help(update, context):
         'Send art here and i will send it to admins for them to verify and we will post it to the Emvc channel to get you some recognition kay .')
 
 
+def albumhandler(update, context):
+    """handle album art from the bot
+triggered by /album
+"""
+    update.message.reply_text(
+        'Start sending me your art and send /album_done when finished ')
+
+
+def albumdonehandler(update, context):
+    """handle album art from the bot
+triggered by /album
+"""
+    update.message.reply_text(
+        'kay .. what now  ')
+
+
 def artHandler(update, context):
-    """handle art from the bot 
-    take the art from the bot 
-    send it to the admins group that is linked to the final channel 
+    """handle art from the bot
+    take the art from the bot
+    send it to the admins group that is linked to the final channel
     """
 
     message = update.effective_message
+    isgroup = message.media_group_id
     user_data = message.from_user
     caption = message.caption
     file_id = message.photo[0].file_unique_id
     first_name = message.chat.first_name
-
     last_name = message.chat.last_name
     name = ''
     username = message.chat.username
@@ -66,49 +84,55 @@ def artHandler(update, context):
         if last_name:
             name = name + ' ' + last_name
 
-    print(name)
-    print("\n------------ artHandler message ----------\n")
-    print(message)
-    print("\n------------ artHandler file_id ----------\n")
-    print(file_id)
-    print("\n------------ artHandler user_data  --------\n")
-    print(user_data)
-    print("\n------------ artHandler caption -----------\n")
-    print(caption)
-    print("\n------------ artHandler naming -------------\n")
-    print(name)
-    print(first_name)
-    print(last_name)
-    print("\n------------------------------------------\n")
-    keyboard = InlineKeyboardMarkup([{
-        InlineKeyboardButton(
-            "Accept", callback_data=f"accept_art({user_data.id})")
-    }, {
-        InlineKeyboardButton(
-            "Reject", callback_data=f"reject_art({user_data.id})")
-    }])
+    print(f"""
+    ----------------- Art handler logs -----------------
+    --------  message  ---------
 
-    context.bot.send_photo(
-        chat_id=group_chat_id,
-        photo=message.photo[0].file_id,
-        caption=f"""
-{name} @{username}
+    {message}
+    --------  name  ---------
 
-Description  :
-{caption}
-""",    parse_mode=ParseMode.MARKDOWN,
-        reply_markup=keyboard)
+    {name}
+    ---------  user_data  --------
 
-    context.bot.send_message(
-        chat_id=user_data.id, text="I have sent your art to the admins for moderation , hang tight . ")
+    {user_data}
+    -------  file_id  ----------
 
+    {file_id}
+    --------  caption  ---------
 
-# reuben , meareg , michael ,sterling archer (R)
-admins_id_list = [567142057, 356768912, 172497135, 370227928, 979190369]
+    {caption}
+    -----------------
+        """)
+
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton(
+            "Accept", callback_data=f"accept_art({user_data.id})"), InlineKeyboardButton(
+            "Reject", callback_data=f"reject_art({user_data.id})")],
+    ])
+    if isgroup:
+        print('This message is an album ignoring')
+        context.bot.send_message(
+            chat_id=user_data.id, text="loooks like you are trying to send an album ... please use /album for that ")
+    else:
+        context.bot.send_photo(
+            chat_id=group_chat_id,
+            photo=message.photo[0].file_id,
+            caption=f"""
+    {name} @{username}
+
+    Description  :
+    {caption}
+    """,
+
+            parse_mode=ParseMode.MARKDOWN,
+            reply_markup=keyboard)
+
+        context.bot.send_message(
+            chat_id=user_data.id, text="I have sent your art to the admins for moderation , hang tight . ")
 
 
 def accept_button(update, context):
-    """handles the art accept button 
+    """handles the art accept button
     """
 
     message = update.effective_message
@@ -147,21 +171,29 @@ def accept_button(update, context):
     # print(type(original_author.group()))
 
     print("\n---------------------------------------------\n")
+    # adminstrator check
     if user_data.id in admins_id_list:
+
         print("all good , this guy is an admin ")
-        context.bot.send_message(chat_id=orig_author_id,
-                                 text="Congrats your art has been accepted and posted to the EMVC channel")
+
+        context.bot.send_message(
+            chat_id=orig_author_id,
+            text="Congrats your art has been accepted and posted to the EMVC channel")
         context.bot.delete_message(
-            chat_id=group_chat_id, message_id=message.message_id)
-        context.bot.send_photo(chat_id=channel_id, photo=file_id, caption=f"""
-{caption}
-""")
+            chat_id=group_chat_id,
+            message_id=message.message_id)
+        context.bot.send_photo(
+            chat_id=channel_id,
+            photo=file_id,
+            caption=f"""
+    {caption}
+    """)
     else:
         print("Non admin trying to accept art , ignoring  ")
 
 
 def reject_button(update, context):
-    """handles the art reject button 
+    """handles the art reject button
     """
 
     message = update.effective_message
@@ -169,12 +201,14 @@ def reject_button(update, context):
     user_data = data.from_user
     query = update.callback_query
     file_id = data['message']['photo'][0].file_id
+
     original_author = re.match(r"reject_art\((.+?)\)", query.data)
     original_author_str = original_author.group()
     original_author_id = re.findall(r"\d", original_author_str)
     original_author_id_int = ""
     for x in original_author_id:
         original_author_id_int = original_author_id_int + x
+
     orig_author_id = int(original_author_id_int)
 
     print("\n----------- reject_art message  ----------\n")
@@ -206,14 +240,16 @@ dp = updater.dispatcher  # Declaring the dispatcher
 
 dp.add_handler(CommandHandler("start", start))
 dp.add_handler(CommandHandler("help", help))
+dp.add_handler(CommandHandler("album", albumhandler))
+dp.add_handler(CommandHandler("album_done", albumdonehandler))
 dp.add_handler(MessageHandler(Filters.photo, artHandler))
 dp.add_handler(ACCEPT_CALLBACK_QUERY_HANDLER)
 dp.add_handler(REJECT_CALLBACK_QUERY_HANDLER)
-
 # ----------------------------------------------------------------
 # webhook shit
-# do not touch
+# ⚠ DO NOT TOUCH !
 # unless you know what you doing
+
 # updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN)
 updater.start_polling()
 # updater.bot.set_webhook("https://emvc-bot.herokuapp.com/" + TOKEN)
