@@ -17,11 +17,12 @@ from telegram.ext import (
     run_async
 )
 
-
 # ----------------------------------------------------------------
 # Constants : basically a control panel to set the :
-# bot token , log channel and admin group
-TOKEN = "1086396783:AAFl7mW9mkuYnmwenRePOW-RSR2AOzurC20"
+# bot token , log channel and admin group 
+# old test bot 
+# TOKEN = "1086396783:AAFl7mW9mkuYnmwenRePOW-RSR2AOzurC20" 
+TOKEN = "1394105957:AAEyrPr8p0ikqKPbyUs54wxZSlo-wsaXeoA"
 group_chat_id = '-1001158819991'
 channel_id = '-1001326503520'
 # ----------------------------------------------------------------
