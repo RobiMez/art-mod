@@ -373,4 +373,5 @@ dp.add_handler(REJECT_CALLBACK_QUERY_HANDLER)
 # unless you know what you doing
 updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN)
 updater.bot.set_webhook("https://emvc-bot.herokuapp.com/" + TOKEN)
+print('✔️  Bot is LIVE  \n')
 updater.idle()
