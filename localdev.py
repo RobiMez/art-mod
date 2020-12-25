@@ -67,66 +67,69 @@ def photoHandler(update, context):
     # userdata : the user id and stuff from the bot 
     user_data = message.from_user
     # caption : the message caption of the message sent to the bot 
-    caption = message.caption
-    # file id : the unique id of the image sent to the bot 
-    file_id = message.photo[0].file_unique_id
-    
-    first_name = message.chat.first_name
+    # break here if not a pm 
+    if message.chat['type'] == 'private':
+        print("is a pm ")
+        caption = message.caption
+        # file id : the unique id of the image sent to the bot 
+        file_id = message.photo[0].file_unique_id
+        
+        first_name = message.chat.first_name
 
-    last_name = message.chat.last_name
-    name = ''
-    username = message.chat.username
-    if first_name:
-        name = name + first_name
-        if last_name:
-            name = name + ' ' + last_name
+        last_name = message.chat.last_name
+        name = ''
+        username = message.chat.username
+        if first_name:
+            name = name + first_name
+            if last_name:
+                name = name + ' ' + last_name
 
-# DEBUG ---------------------------------------------------------
-    print("\n░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░\n")
-    print("\n------------ photoHandler Debug : message \n")
-    print(message)
-    print("\n------------ photoHandler Debug : user_data  \n")
-    print(user_data)
-    print("\n------------ photoHandler Debug : file_id \n")
-    print(file_id)
-    print("\n------------ photoHandler Debug : naming : name , first , last  \n")
-    print(name)
-    print(first_name)
-    print(last_name)
-    print("\n------------ photoHandler Debug : caption \n")
-    print(caption)
-    print("\n░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░\n")
-# DEBUG ---------------------------------------------------------
+    # DEBUG ---------------------------------------------------------
+        print("\n░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░\n")
+        print("\n------------ photoHandler Debug : message \n")
+        print(message)
+        print("\n------------ photoHandler Debug : user_data  \n")
+        print(user_data)
+        print("\n------------ photoHandler Debug : file_id \n")
+        print(file_id)
+        print("\n------------ photoHandler Debug : naming : name , first , last  \n")
+        print(name)
+        print(first_name)
+        print(last_name)
+        print("\n------------ photoHandler Debug : caption \n")
+        print(caption)
+        print("\n░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░\n")
+    # DEBUG ---------------------------------------------------------
 
 
-    # Photo art input from the bot 
-    # send to admin group for moderation 
-    # send to the channel if approved 
-    
-    # Keyboard : the inline keyboard markup that dictates the layout of the buttons.
-    keyboard = InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "Accept", callback_data=f"accept_art({user_data.id})"),
-            InlineKeyboardButton(
-                "Reject", callback_data=f"reject_art({user_data.id})")
-        ],
-    ])
-# bot sends photo for moderation by admins 
-    context.bot.send_photo(
-        chat_id=admin_group_id,
-        photo=message.photo[0].file_id,
-        caption=f"""
-{name}  @{username}
+        # Photo art input from the bot 
+        # send to admin group for moderation 
+        # send to the channel if approved 
+        
+        # Keyboard : the inline keyboard markup that dictates the layout of the buttons.
+        keyboard = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton(
+                    "Accept", callback_data=f"accept_art({user_data.id})"),
+                InlineKeyboardButton(
+                    "Reject", callback_data=f"reject_art({user_data.id})")
+            ],
+        ])
+    # bot sends photo for moderation by admins 
+        context.bot.send_photo(
+            chat_id=admin_group_id,
+            photo=message.photo[0].file_id,
+            caption=f"""
+    {name}  @{username}
 
-Description  :
-{caption}
-""",    parse_mode=ParseMode.MARKDOWN,
-        reply_markup=keyboard)
-# Bot echos back to the user for conformaiton of message delivery
-# needs bot to have been in contact with user as the bot cant message new people
-    context.bot.send_message(
-        chat_id=user_data.id, text="I have sent your art to the admins for moderation , hang tight . ")
+    Description  :
+    {caption}
+    """,    parse_mode=ParseMode.MARKDOWN,
+            reply_markup=keyboard)
+    # Bot echos back to the user for conformaiton of message delivery
+    # needs bot to have been in contact with user as the bot cant message new people
+        context.bot.send_message(
+            chat_id=user_data.id, text="I have sent your art to the admins for moderation , hang tight . ")
 
 
 
@@ -150,66 +153,68 @@ def videoHandler(update, context):
     # userdata : the user id and stuff from the bot 
     user_data = message.from_user
     # caption : the message caption of the message sent to the bot 
-    caption = message.caption
-    # file id : the unique id of the video sent to the bot 
-    file_id = message.video.file_unique_id
-    
-    first_name = message.chat.first_name
+    if message.chat['type'] == 'private':
+        print("is a pm ")
+        caption = message.caption
+        # file id : the unique id of the video sent to the bot 
+        file_id = message.video.file_unique_id
+        
+        first_name = message.chat.first_name
 
-    last_name = message.chat.last_name
-    name = ''
-    username = message.chat.username
-    if first_name:
-        name = name + first_name
-        if last_name:
-            name = name + ' ' + last_name
+        last_name = message.chat.last_name
+        name = ''
+        username = message.chat.username
+        if first_name:
+            name = name + first_name
+            if last_name:
+                name = name + ' ' + last_name
 
-# DEBUG ---------------------------------------------------------
-    print("\n░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░\n")
-    print("\n------------ videoHandler Debug : message \n")
-    print(message)
-    print("\n------------ videoHandler Debug : user_data  \n")
-    print(user_data)
-    print("\n------------ videoHandler Debug : file_id \n")
-    print(file_id)
-    print("\n------------ videoHandler Debug : naming : name , first , last  \n")
-    print(name)
-    print(first_name)
-    print(last_name)
-    print("\n------------ videoHandler Debug : caption \n")
-    print(caption)
-    print("\n░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░\n")
-# DEBUG ---------------------------------------------------------
+    # DEBUG ---------------------------------------------------------
+        print("\n░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░\n")
+        print("\n------------ videoHandler Debug : message \n")
+        print(message)
+        print("\n------------ videoHandler Debug : user_data  \n")
+        print(user_data)
+        print("\n------------ videoHandler Debug : file_id \n")
+        print(file_id)
+        print("\n------------ videoHandler Debug : naming : name , first , last  \n")
+        print(name)
+        print(first_name)
+        print(last_name)
+        print("\n------------ videoHandler Debug : caption \n")
+        print(caption)
+        print("\n░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░\n")
+    # DEBUG ---------------------------------------------------------
 
 
-    # Photo art input from the bot 
-    # send to admin group for moderation 
-    # send to the channel if approved 
-    
-    # Keyboard : the inline keyboard markup that dictates the layout of the buttons.
-    keyboard = InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "Accept", callback_data=f"accept_art({user_data.id})"),
-            InlineKeyboardButton(
-                "Reject", callback_data=f"reject_art({user_data.id})")
-        ],
-    ])
-# bot sends photo for moderation by admins 
-    context.bot.send_video(
-        chat_id=admin_group_id,
-        video=message.video.file_id,
-        caption=f"""
-{name}  @{username}
+        # Photo art input from the bot 
+        # send to admin group for moderation 
+        # send to the channel if approved 
+        
+        # Keyboard : the inline keyboard markup that dictates the layout of the buttons.
+        keyboard = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton(
+                    "Accept", callback_data=f"accept_art({user_data.id})"),
+                InlineKeyboardButton(
+                    "Reject", callback_data=f"reject_art({user_data.id})")
+            ],
+        ])
+    # bot sends photo for moderation by admins 
+        context.bot.send_video(
+            chat_id=admin_group_id,
+            video=message.video.file_id,
+            caption=f"""
+    {name}  @{username}
 
-Description  :
-{caption}
-""",    parse_mode=ParseMode.MARKDOWN,
-        reply_markup=keyboard)
-# Bot echos back to the user for conformaiton of message delivery
-# needs bot to have been in contact with user as the bot cant message new people
-    context.bot.send_message(
-        chat_id=user_data.id, text="I have sent your art to the admins for moderation , hang tight . ")
+    Description  :
+    {caption}
+    """,    parse_mode=ParseMode.MARKDOWN,
+            reply_markup=keyboard)
+    # Bot echos back to the user for conformaiton of message delivery
+    # needs bot to have been in contact with user as the bot cant message new people
+        context.bot.send_message(
+            chat_id=user_data.id, text="I have sent your art to the admins for moderation , hang tight . ")
 
 
 
@@ -231,6 +236,10 @@ def accept_button(update, context):
     user_data = data.from_user
     caption = message.caption
     query = update.callback_query
+    print("\n----------- accept_button Debug : message  \n")
+    print(message)
+    print("\n----------- accept_button Debug : data  \n")
+    print(data)
     if data['message']['photo']:
         print ('accepting a photo file ')
         file_id = data['message']['photo'].file_id
@@ -252,10 +261,7 @@ def accept_button(update, context):
 # DEBUG ---------------------------------------------------------
     print("\n░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░\n")
     # original_author_id = re.match("[0123456789]", original_author.group())
-    print("\n----------- accept_button Debug : message  \n")
-    print(message)
-    print("\n----------- accept_button Debug : data  \n")
-    print(data)
+
     print("\n----------- accept_button Debug : user_data \n")
     print(user_data)
     print("\n----------- accept_button Debug : Admin status \n")
