@@ -21,21 +21,20 @@ from telegram.ext import (
 # Constants : basically a control panel to set the :
 # Bot token, Log channel and Admin group
 
-TOKEN = "1394105957:AAEyrPr8p0ikqKPbyUs54wxZSlo-wsaXeoA"
+TOKEN = "1151126101:AoGdoLoD0Fyj_kQQo4NrojV_swoEPkT-qo0"
 
-admin_group_id = '-1001158819991'
-comment_group_id = '-1001480804050'
-art_channel_id = '-1001326503520'
+admin_group_id = '-1001322413742'
+comment_group_id = '-1001532610423'
+art_channel_id = '-1001549876545'
 
-# ----------------------------------------------------------------
+# ------------------------------------------------------------
 # Webhook Configuration
 PORT = int(os.environ.get('PORT', '8443'))
 # Updater declaration
 updater = Updater(TOKEN)
-# reuben , meareg , michael ,sterling archer (R)
-admins_id_list = [567142057, 356768912, 172497135, 370227928, 979190369]
+admins_id_list = [979190369,352475318]
 
-# ---------------------------------------------------------------
+# ------------------------------------------------------------
 print('\n⌛️  Bot is Waking up\n')
 # Functionality 
 
@@ -43,13 +42,23 @@ print('\n⌛️  Bot is Waking up\n')
 def start(update, context):
     """Send a message when the command /start is issued."""
     update.message.reply_text(
-        'Welcome dude \nSend /help if you are not sure what to do ')
+        'Hi there  \nSend /help if you are not sure what to do ')
 
 
 def help(update, context):
     """Send a message when the command /help is issued."""
     update.message.reply_text(
-        'Send art here and i will send it to admins for them to verify and we will post it to the Emvc channel to get you some recognition kay .')
+        '''I am Art_mod, A bot for moderating art sent by the masses:
+        
+Join these to see a preview of how i work 
+
+    @artmod_discussions
+    @artmod_moderation
+    @artmod_published
+    
+then send me an image to get started.
+
+        ''')
 
 
 def photoHandler(update, context):
@@ -115,6 +124,7 @@ def photoHandler(update, context):
                     "Reject", callback_data=f"reject_art({user_data.id})")
             ],
         ])
+        print(keyboard)
     # bot sends photo for moderation by admins 
         context.bot.send_photo(
             chat_id=admin_group_id,
@@ -122,9 +132,9 @@ def photoHandler(update, context):
             caption=f"""
     {name}  @{username}
 
-    Description  :
+Description  :
     {caption}
-    """,    parse_mode=ParseMode.MARKDOWN,
+    """,    parse_mode=ParseMode.HTML,
             reply_markup=keyboard)
     # Bot echos back to the user for conformaiton of message delivery
     # needs bot to have been in contact with user as the bot cant message new people
@@ -207,7 +217,7 @@ def videoHandler(update, context):
             caption=f"""
     {name}  @{username}
 
-    Description  :
+Description  :
     {caption}
     """,    parse_mode=ParseMode.MARKDOWN,
             reply_markup=keyboard)
@@ -242,10 +252,11 @@ def accept_button(update, context):
     print(data)
     if data['message']['photo']:
         print ('accepting a photo file ')
-        file_id = data['message']['photo'].file_id
+        # print(data['message']['photo'])
+        file_id = data['message']['photo'][0].file_id
     if data['message']['video']:
         print ('accepting a video file ')
-        file_id = data['message']['video'].file_id
+        file_id = data['message']['video'][0].file_id
     # admins = context.bot.get_chat_administrators(group_chat_id)
     # for admin in admins:
     #     admins_id_list.append(admin.user.id)
@@ -286,7 +297,7 @@ def accept_button(update, context):
     if user_data.id in admins_id_list:
         print("All Good , This User is An Admin, Executing Command.")
         context.bot.send_message(chat_id=orig_author_id,
-                                 text="Congrats your art has been accepted and posted to the EMVC channel")
+                                 text="Congrats your art has been accepted and posted to the channel")
         # deletes the message i guess ? on the admin group 
         context.bot.delete_message(
             chat_id=admin_group_id, message_id=message.message_id)
@@ -317,10 +328,10 @@ def reject_button(update, context):
     query = update.callback_query
     if data['message']['photo']:
         print ('accepting a photo file ')
-        file_id = data['message']['photo'].file_id
+        file_id = data['message']['photo'][0].file_id
     if data['message']['video']:
         print ('accepting a video file ')
-        file_id = data['message']['video'].file_id
+        file_id = data['message']['video'][0].file_id
     original_author = re.match(r"reject_art\((.+?)\)", query.data)
     original_author_str = original_author.group()
     original_author_id = re.findall(r"\d", original_author_str)
@@ -343,7 +354,7 @@ def reject_button(update, context):
         print("All Good , This User is An Admin, Executing Command.")
         # echos back to the original user that their art has been rejected 
         context.bot.send_message(
-            chat_id=orig_author_id, text="Sorry your art has been rejected, possible reasons can be breaking the rules, check @EMVC_Rules")
+            chat_id=orig_author_id, text="Sorry your art has been rejected, possible reasons can be breaking the rules.")
         # deletes the message in the admin group 
         context.bot.delete_message(
             chat_id=admin_group_id, message_id=message.message_id)
