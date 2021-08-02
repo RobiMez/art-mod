@@ -383,8 +383,8 @@ dp.add_handler(REJECT_CALLBACK_QUERY_HANDLER)
 # ⚠ DO NOT TOUCH !
 # unless you know what you doing
 
-updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN)
+updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN,webhook_url='https://art-mod.herokuapp.com/' + TOKEN)
 # updater.start_polling()
 print('✔️  Bot is LIVE  \n')
-updater.bot.set_webhook("https://art-mod.herokuapp.com/" + TOKEN)
+# updater.bot.set_webhook("https://art-mod.herokuapp.com/" + TOKEN)
 updater.idle()
